@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Expo
+.expo/
+.expo-shared/
+dist/
+web-build/
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# Local env files
+.env*.local
+.env
+
+# Typescript
+*.tsbuildinfo
+
+# iOS
+mobile-app/ios/Pods/
+mobile-app/ios/Podfile.lock
+mobile-app/ios/*.xcworkspace
+mobile-app/ios/build/
+mobile-app/ios/.xcode.env.local
+
+# Android
+mobile-app/android/build/
+mobile-app/android/app/build/
+mobile-app/android/.gradle/
+mobile-app/android/gradle/
+mobile-app/android/local.properties
+mobile-app/android/.cxx/
+mobile-app/android/captures/
+
+# Go
+backend/*.aar
+backend/*.framework
+backend/*.xcframework
+*.sum
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+*.log

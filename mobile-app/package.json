@@ -1,0 +1,42 @@
+{
+  "name": "rn-golang",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "android:build": "./build-android.sh",
+    "ios": "expo run:ios",
+    "ios:build": "./build-ios.sh",
+    "web": "expo start --web",
+    "build:backend": "make -C ../backend",
+    "build:backend:android": "make -C ../backend android",
+    "build:backend:ios": "make -C ../backend ios",
+    "clean:backend": "make -C ../backend clean"
+  },
+  "dependencies": {
+    "@react-native-community/blur": "^4.4.1",
+    "expo": "~54.0.10",
+    "expo-dev-client": "~6.0.12",
+    "expo-status-bar": "~3.0.8",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-gesture-handler": "^2.28.0",
+    "react-native-linear-gradient": "^2.8.3",
+    "react-native-reanimated": "^4.1.2",
+    "react-native-svg": "^15.13.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "typescript": "~5.9.2"
+  },
+  "codegenConfig": {
+    "name": "GoServerBridgeSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "io.rngolang.app"
+    }
+  },
+  "private": true
+}
