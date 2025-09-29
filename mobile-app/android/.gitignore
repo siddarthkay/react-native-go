@@ -14,3 +14,6 @@ local.properties
 
 # Bundle artifacts
 *.jsbundle
+
+# Go-generated libraries
+app/libs/*.aar

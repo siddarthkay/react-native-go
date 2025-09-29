@@ -1,8 +1,0 @@
-framework module "Gobridge" {
-	header "ref.h"
-    header "Gobridge.objc.h"
-    header "Universe.objc.h"
-    header "Gobridge.h"
-
-    export *
-}

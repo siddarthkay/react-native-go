@@ -22,6 +22,14 @@ This project showcases how to build a fast mobile application where:
 
 ## Quick Start
 
+### Setup Build Environment
+
+First time setup (installs gomobile and required dependencies):
+```bash
+cd backend
+make setup
+```
+
 ### Build Go Backend
 
 iOS:
@@ -35,6 +43,8 @@ Android:
 cd backend
 make android
 ```
+
+You can also run `make help` in the backend directory to see all available targets.
 
 ### Run the App
 

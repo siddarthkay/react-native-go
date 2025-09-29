@@ -11,6 +11,11 @@ class GoServerBridgeModule(reactContext: ReactApplicationContext) :
 
     companion object {
         const val NAME = "GoServerBridge"
+
+        init {
+            // Load the Go native library
+            System.loadLibrary("gojni")
+        }
     }
 
     private val mobileAPI = MobileAPI()

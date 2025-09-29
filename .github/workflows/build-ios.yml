@@ -1,0 +1,85 @@
+name: Build iOS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    name: Build iOS App
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mobile-app/package-lock.json
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: Setup Go backend environment
+        working-directory: backend
+        run: make setup
+
+      - name: Build Go backend for iOS
+        working-directory: backend
+        run: make ios
+
+      - name: Install Node dependencies
+        working-directory: mobile-app
+        run: npm install
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          working-directory: mobile-app/ios
+
+      - name: Install CocoaPods dependencies
+        working-directory: mobile-app/ios
+        run: pod install
+
+      - name: Select Xcode
+        run: sudo xcode-select -s "/Applications/Xcode_16.4.app/Contents/Developer"
+
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
+      - name: Build iOS Simulator App
+        working-directory: mobile-app/ios
+        run: |
+          set -o pipefail
+          xcodebuild -workspace mobileapp.xcworkspace \
+            -scheme mobileapp \
+            -sdk iphonesimulator \
+            -configuration Release \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            | xcbeautify
+
+      - name: Prepare iOS app for upload
+        working-directory: mobile-app/ios/build/Build/Products/Release-iphonesimulator
+        run: cp -r mobileapp.app rn-golang-ios.app
+
+      - name: Upload Simulator Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: rn-golang-ios.app
+          path: mobile-app/ios/build/Build/Products/Release-iphonesimulator/rn-golang-ios.app
+          retention-days: 60
