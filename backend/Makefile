@@ -1,31 +1,23 @@
-# Backend Makefile for Go-React Native Bridge
-
-# Configuration
 GO ?= go
 GOPATH ?= $(shell $(GO) env GOPATH)
 GOROOT ?= $(shell $(GO) env GOROOT)
 GOMOBILE ?= $(GOPATH)/bin/gomobile
 GOBIND ?= $(GOPATH)/bin/gobind
 
-# Mobile package source location
 MOBILE_PKG_SRC = $(GOPATH)/src/golang.org/x/mobile
 
-# Output paths
 ANDROID_OUTPUT = ../mobile-app/android/app/libs/gobridge.aar
 IOS_OUTPUT = ../mobile-app/ios/Frameworks/Gobridge.xcframework
 
-# Android API level
 ANDROID_API = 23
 
 .PHONY: all setup android ios clean check-go install-gomobile setup-mobile-src
 
 all: android
 
-# Main setup target - installs all dependencies
 setup: check-go install-gomobile setup-mobile-src
 	@echo "Setup complete!"
 
-# Check if Go is installed
 check-go:
 	@echo "Checking Go installation..."
 	@if ! command -v $(GO) > /dev/null 2>&1; then \
@@ -37,7 +29,6 @@ check-go:
 	@echo "GOROOT: $(GOROOT)"
 	@echo "GOPATH: $(GOPATH)"
 
-# Install gomobile and gobind
 install-gomobile:
 	@echo "Installing gomobile and gobind..."
 	@$(GO) install golang.org/x/mobile/cmd/gomobile@latest
@@ -45,7 +36,6 @@ install-gomobile:
 	@echo "Gomobile installed at: $(GOMOBILE)"
 	@echo "Gobind installed at: $(GOBIND)"
 
-# Setup mobile package source (needed for bind package)
 setup-mobile-src:
 	@echo "Setting up golang.org/x/mobile source..."
 	@echo "Downloading mobile module to cache..."
@@ -68,7 +58,6 @@ setup-mobile-src:
 	@GOPATH=$(GOPATH) PATH=$(GOPATH)/bin:$(GOROOT)/bin:$$PATH $(GOMOBILE) init
 	@echo "Mobile package setup complete"
 
-# Check if setup is complete
 check-setup:
 	@echo "Verifying build environment..."
 	@if ! command -v $(GO) > /dev/null 2>&1; then \
@@ -118,7 +107,6 @@ clean-all: clean
 	@$(GO) clean -modcache
 	@echo "✓ Full clean complete"
 
-# Development helpers
 test:
 	@echo "Running tests..."
 	@$(GO) test -v ./...
@@ -131,7 +119,6 @@ vet:
 	@echo "Running go vet..."
 	@$(GO) vet ./...
 
-# Help target
 help:
 	@echo "Available targets:"
 	@echo "  make setup        - Install all dependencies (gomobile, mobile source)"

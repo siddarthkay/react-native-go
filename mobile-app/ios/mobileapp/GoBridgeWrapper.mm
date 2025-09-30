@@ -1,20 +1,17 @@
 #import "GoBridgeWrapper.h"
 
-// Define function prototypes to avoid direct import of Gobridge headers
 @interface GobridgeMobileAPI : NSObject
 - (long)startServer;
 - (void)stopServer;
 - (long)getServerPort;
 @end
 
-// Forward declare the class loading
 Class GobridgeMobileAPIClass;
 
 @implementation GoBridgeWrapper
 
 + (void)initialize {
   if (self == [GoBridgeWrapper class]) {
-    // Load the GobridgeMobileAPI class dynamically to avoid header import conflicts
     GobridgeMobileAPIClass = NSClassFromString(@"GobridgeMobileAPI");
   }
 }

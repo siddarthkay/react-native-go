@@ -5,7 +5,6 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #include "GoServerBridgeSpecJSI.h"
 
-// C++ class for TurboModule - inherits from the spec template
 class GoServerBridgeImpl : public facebook::react::NativeGoServerBridgeCxxSpec<GoServerBridgeImpl> {
 public:
     GoServerBridgeImpl(std::shared_ptr<facebook::react::CallInvoker> jsInvoker);

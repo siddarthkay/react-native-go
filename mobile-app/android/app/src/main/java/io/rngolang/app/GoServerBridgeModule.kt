@@ -13,7 +13,6 @@ class GoServerBridgeModule(reactContext: ReactApplicationContext) :
         const val NAME = "GoServerBridge"
 
         init {
-            // Load the Go native library
             System.loadLibrary("gojni")
         }
     }

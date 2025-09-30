@@ -94,9 +94,9 @@ The native modules expose 3 synchronous methods via JSI:
 
 ```typescript
 interface Spec extends TurboModule {
-  readonly startServer: () => number;    // Returns port number
-  readonly stopServer: () => boolean;    // Returns success status
-  readonly getServerPort: () => number;  // Gets current port
+  readonly startServer: () => number;
+  readonly stopServer: () => boolean;
+  readonly getServerPort: () => number;
 }
 ```
 
@@ -126,9 +126,7 @@ And handles business logic via JSON-RPC:
 func (s *HTTPServer) handleRequest(req JSONRPCRequest) JSONRPCResponse {
     switch req.Method {
     case "getGreeting":
-        // Handle business logic
     case "getCurrentTime":
-        // Handle business logic
     }
 }
 ```
@@ -150,7 +148,6 @@ const result = await client.call('getGreeting', { name: 'World' });
 To add a new endpoint, modify only the Go backend:
 
 ```go
-// In backend/http_server.go
 case "myNewMethod":
     params, ok := req.Params.(map[string]interface{})
     if !ok {

@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-// JSONRPCRequest represents a JSON-RPC 2.0 request
 type JSONRPCRequest struct {
 	JSONRPC string      `json:"jsonrpc"`
 	Method  string      `json:"method"`
@@ -19,22 +18,19 @@ type JSONRPCRequest struct {
 	ID      interface{} `json:"id"`
 }
 
-// JSONRPCResponse represents a JSON-RPC 2.0 response
 type JSONRPCResponse struct {
-	JSONRPC string      `json:"jsonrpc"`
-	Result  interface{} `json:"result,omitempty"`
+	JSONRPC string        `json:"jsonrpc"`
+	Result  interface{}   `json:"result,omitempty"`
 	Error   *JSONRPCError `json:"error,omitempty"`
-	ID      interface{} `json:"id"`
+	ID      interface{}   `json:"id"`
 }
 
-// JSONRPCError represents a JSON-RPC 2.0 error
 type JSONRPCError struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 }
 
-// HTTPServer manages the local HTTP server
 type HTTPServer struct {
 	server *http.Server
 	port   int
@@ -46,12 +42,10 @@ var (
 	serverMu     sync.Mutex
 )
 
-// NewHTTPServer creates a new HTTP server instance
 func NewHTTPServer() *HTTPServer {
 	return &HTTPServer{}
 }
 
-// StartServer starts the HTTP server on an available port
 func (s *HTTPServer) StartServer() (int, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -60,7 +54,6 @@ func (s *HTTPServer) StartServer() (int, error) {
 		return s.port, fmt.Errorf("server already running on port %d", s.port)
 	}
 
-	// Find an available port
 	listener, err := net.Listen("tcp", ":0")
 	if err != nil {
 		return 0, fmt.Errorf("failed to find available port: %v", err)
@@ -68,7 +61,6 @@ func (s *HTTPServer) StartServer() (int, error) {
 	s.port = listener.Addr().(*net.TCPAddr).Port
 	listener.Close()
 
-	// Create HTTP server
 	mux := http.NewServeMux()
 	mux.HandleFunc("/jsonrpc", s.handleJSONRPC)
 	mux.HandleFunc("/health", s.handleHealth)
@@ -78,7 +70,6 @@ func (s *HTTPServer) StartServer() (int, error) {
 		Handler: mux,
 	}
 
-	// Start server in background
 	go func() {
 		log.Printf("Starting HTTP server on port %d", s.port)
 		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -86,13 +77,11 @@ func (s *HTTPServer) StartServer() (int, error) {
 		}
 	}()
 
-	// Wait a moment for server to start
 	time.Sleep(100 * time.Millisecond)
 
 	return s.port, nil
 }
 
-// StopServer stops the HTTP server
 func (s *HTTPServer) StopServer() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -111,14 +100,12 @@ func (s *HTTPServer) StopServer() error {
 	return err
 }
 
-// GetPort returns the current server port
 func (s *HTTPServer) GetPort() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	return s.port
 }
 
-// handleHealth provides a simple health check endpoint
 func (s *HTTPServer) handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -128,7 +115,6 @@ func (s *HTTPServer) handleHealth(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// handleJSONRPC handles JSON-RPC requests
 func (s *HTTPServer) handleJSONRPC(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -155,7 +141,6 @@ func (s *HTTPServer) handleJSONRPC(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// processRequest processes a JSON-RPC request
 func (s *HTTPServer) processRequest(req JSONRPCRequest) JSONRPCResponse {
 	if req.JSONRPC != "2.0" {
 		return JSONRPCResponse{
@@ -204,7 +189,6 @@ func (s *HTTPServer) processRequest(req JSONRPCRequest) JSONRPCResponse {
 	}
 }
 
-// errorResponse creates an error response
 func (s *HTTPServer) errorResponse(id interface{}, code int, message string) JSONRPCResponse {
 	return JSONRPCResponse{
 		JSONRPC: "2.0",
@@ -213,16 +197,12 @@ func (s *HTTPServer) errorResponse(id interface{}, code int, message string) JSO
 	}
 }
 
-// writeError writes an error response
 func (s *HTTPServer) writeError(w http.ResponseWriter, id interface{}, code int, message string) {
 	response := s.errorResponse(id, code, message)
 	w.WriteHeader(http.StatusBadRequest)
 	json.NewEncoder(w).Encode(response)
 }
 
-// Global functions for mobile API
-
-// StartHTTPServer starts the global HTTP server
 func StartHTTPServer() int {
 	serverMu.Lock()
 	defer serverMu.Unlock()
@@ -241,7 +221,6 @@ func StartHTTPServer() int {
 	return port
 }
 
-// StopHTTPServer stops the global HTTP server
 func StopHTTPServer() {
 	serverMu.Lock()
 	defer serverMu.Unlock()
@@ -252,7 +231,6 @@ func StopHTTPServer() {
 	}
 }
 
-// GetHTTPServerPort returns the current server port
 func GetHTTPServerPort() int {
 	serverMu.Lock()
 	defer serverMu.Unlock()

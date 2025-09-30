@@ -19,7 +19,6 @@ export default function App() {
   const [jsonRpcClient, setJsonRpcClient] = useState<JsonRpcClient | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const startServer = () => {
@@ -56,7 +55,7 @@ export default function App() {
       type,
       timestamp: new Date(),
     };
-    setResults(prev => [newResult, ...prev.slice(0, 19)]); // Keep only 20 results
+    setResults(prev => [newResult, ...prev.slice(0, 19)]);
   };
 
   const testServerInfo = useCallback(async () => {
@@ -115,7 +114,6 @@ export default function App() {
     setResults([]);
   }, []);
 
-  // Pre-computed button styles to prevent re-calculations
   const buttonStyles = useMemo(() => ({
     primary: [styles.button, styles.primaryButton],
     secondary: [styles.button, styles.secondaryButton],
@@ -130,7 +128,6 @@ export default function App() {
     disabled: [styles.buttonText, styles.buttonTextDisabled],
   }), []);
 
-  // Modern Button component with zero flickering
   const Button = memo(({ onPress, title, variant = 'primary', disabled = false }: any) => {
     const buttonStyle = disabled ? buttonStyles[`${variant}Disabled`] : buttonStyles[variant];
     const textStyle = disabled ? textStyles.disabled : textStyles.normal;
@@ -153,7 +150,6 @@ export default function App() {
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <StatusBar style="light" />
 
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>RN + Local GoLang Server</Text>
         {serverPort > 0 && (
@@ -164,7 +160,6 @@ export default function App() {
         )}
       </View>
 
-      {/* Controls */}
       <View style={styles.controls}>
         <View style={styles.buttonRow}>
           <Button
@@ -195,7 +190,6 @@ export default function App() {
         </View>
       </View>
 
-      {/* Results */}
       <View style={styles.results}>
         <ScrollView showsVerticalScrollIndicator={false}>
           {results.map((result) => (

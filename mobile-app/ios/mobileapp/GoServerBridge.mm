@@ -3,7 +3,6 @@
 #import <react/bridging/Bridging.h>
 
 #ifdef RCT_NEW_ARCH_ENABLED
-// C++ Implementation
 GoServerBridgeImpl::GoServerBridgeImpl(std::shared_ptr<facebook::react::CallInvoker> jsInvoker)
     : NativeGoServerBridgeCxxSpec(std::move(jsInvoker)) {}
 
@@ -21,7 +20,7 @@ double GoServerBridgeImpl::getServerPort(facebook::jsi::Runtime &rt) {
     NSNumber *result = [GoBridgeWrapper getServerPort];
     return [result doubleValue];
 }
-#endif // RCT_NEW_ARCH_ENABLED
+#endif
 
 @implementation GoServerBridge
 

@@ -1,4 +1,4 @@
-module github.com/example/go-react-native-backend
+module github.com/siddarthkay/react-native-go
 
 go 1.24.0
 
