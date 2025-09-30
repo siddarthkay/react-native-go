@@ -32,7 +32,6 @@
 		BC579A8592919FD74178F556 /* Pods-mobileapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobileapp.debug.xcconfig"; path = "Target Support Files/Pods-mobileapp/Pods-mobileapp.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = mobileapp/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* mobileapp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "mobileapp-Bridging-Header.h"; path = "mobileapp/mobileapp-Bridging-Header.h"; sourceTree = "<group>"; };
 		FB0085F001083A8C91ADF71C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = mobileapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		G0S1234567890ABC12345679 /* GoServerBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = GoServerBridge.mm; path = mobileapp/GoServerBridge.mm; sourceTree = "<group>"; };
 		G0S1234567890ABC12345680 /* GoServerBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GoServerBridge.h; path = mobileapp/GoServerBridge.h; sourceTree = "<group>"; };
@@ -56,7 +55,6 @@
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
 				G0S1234567890ABC12345680 /* GoServerBridge.h */,
 				G0S1234567890ABC12345679 /* GoServerBridge.mm */,
-				F11748444D0722820044C1D9 /* mobileapp-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,

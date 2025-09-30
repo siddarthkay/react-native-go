@@ -1,6 +1,12 @@
 # React Native + Go Backend
 
-![Screenshot](android+ios-screenshot.png)
+<p align="center">
+  <img src="banner-v2.png" alt="React Native + Go Backend" />
+</p>
+
+<p align="center">
+  <img src="android+ios-screenshot.png" alt="App Screenshots" />
+</p>
 
 A React Native application demonstrating communication with a local Go HTTP server using JSI and JSON-RPC 2.0.
 
