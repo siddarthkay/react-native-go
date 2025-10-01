@@ -20,8 +20,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: mobile-app/package-lock.json
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            mobile-app/.yarn/cache
+            mobile-app/.yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-${{ hashFiles('mobile-app/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -40,7 +51,7 @@ jobs:
 
       - name: Install Node dependencies
         working-directory: mobile-app
-        run: npm install
+        run: yarn install --immutable
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

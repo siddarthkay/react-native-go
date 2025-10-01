@@ -21,6 +21,7 @@ This project showcases how to build a fast mobile application where:
 ## Prerequisites
 
 - Node.js 18+
+- Yarn 4 (via Corepack): `corepack enable`
 - Go 1.24+
 - gomobile: `go install golang.org/x/mobile/cmd/gomobile@latest`
 - iOS: Xcode 15+, CocoaPods
@@ -30,7 +31,12 @@ This project showcases how to build a fast mobile application where:
 
 ### Setup Build Environment
 
-First time setup (installs gomobile and required dependencies):
+Enable Corepack for Yarn 4:
+```bash
+corepack enable
+```
+
+Setup Go backend (installs gomobile and required dependencies):
 ```bash
 cd backend
 make setup
@@ -57,7 +63,7 @@ You can also run `make help` in the backend directory to see all available targe
 iOS:
 ```bash
 cd mobile-app
-npm install
+yarn install
 npx pod-install
 npx expo run:ios
 ```
@@ -65,7 +71,7 @@ npx expo run:ios
 Android:
 ```bash
 cd mobile-app
-npm install
+yarn install
 npx expo run:android
 ```
 
