@@ -6,14 +6,8 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "android:build": "./build-android.sh",
     "ios": "expo run:ios",
-    "ios:build": "./build-ios.sh",
-    "web": "expo start --web",
-    "build:backend": "make -C ../backend",
-    "build:backend:android": "make -C ../backend android",
-    "build:backend:ios": "make -C ../backend ios",
-    "clean:backend": "make -C ../backend clean"
+    "web": "expo start --web"
   },
   "dependencies": {
     "@babel/core": "^7.28.4",

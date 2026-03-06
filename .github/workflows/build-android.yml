@@ -41,17 +41,17 @@ jobs:
           cache: true
           cache-dependency-path: backend/go.sum
 
-      - name: Setup Go backend environment
-        working-directory: backend
-        run: make setup
+      - name: Setup Go backend
+        run: make -C backend setup
+
+      - name: Test Go backend
+        run: make -C backend test && make -C backend vet
 
       - name: Build Go backend for Android
-        working-directory: backend
-        run: make android
+        run: make -C backend android
 
       - name: Install Node dependencies
-        working-directory: mobile-app
-        run: yarn install --immutable
+        run: make -C mobile-app install
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4
@@ -64,21 +64,8 @@ jobs:
         with:
           cache-read-only: false
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x mobile-app/android/gradlew
-
       - name: Build Release APK
-        working-directory: mobile-app/android
-        env:
-          NODE_ENV: production
-          EXPO_USE_FAST_RESOLVER: 1
-        run: |
-          ./gradlew assembleRelease \
-            --no-daemon \
-            --parallel \
-            --build-cache \
-            -Dorg.gradle.jvmargs="-Xmx5g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError" \
-            -Dkotlin.compiler.execution.strategy=in-process
+        run: make -C mobile-app build-android
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4

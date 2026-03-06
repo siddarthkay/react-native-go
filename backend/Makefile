@@ -34,19 +34,7 @@ install-gomobile:
 	@echo "Gomobile installed at: $(GOMOBILE)"
 	@echo "Gobind installed at: $(GOBIND)"
 
-check-setup:
-	@echo "Verifying build environment..."
-	@if ! command -v $(GO) > /dev/null 2>&1; then \
-		echo "Error: Go not found. Run 'make setup'"; \
-		exit 1; \
-	fi
-	@if [ ! -f "$(GOMOBILE)" ]; then \
-		echo "Error: gomobile not found. Run 'make setup'"; \
-		exit 1; \
-	fi
-	@echo "Build environment OK"
-
-android: check-setup
+android: setup
 	@echo "Building Android AAR..."
 	@mkdir -p $(dir $(ANDROID_OUTPUT))
 	@$(GO) mod download
@@ -57,7 +45,7 @@ android: check-setup
 		./
 	@echo "✓ Android AAR built successfully at $(ANDROID_OUTPUT)"
 
-ios: check-setup
+ios: setup
 	@echo "Building iOS XCFramework..."
 	@mkdir -p $(dir $(IOS_OUTPUT))
 	@$(GO) mod download
@@ -97,7 +85,6 @@ help:
 	@echo "  make ios          - Build iOS XCFramework"
 	@echo "  make clean        - Remove build artifacts"
 	@echo "  make clean-all    - Remove build artifacts and module cache"
-	@echo "  make check-setup  - Verify build environment"
 	@echo "  make test         - Run Go tests"
 	@echo "  make fmt          - Format Go code"
 	@echo "  make vet          - Run go vet"
