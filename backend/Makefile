@@ -37,7 +37,7 @@ install-gomobile:
 android: setup
 	@echo "Building Android AAR..."
 	@mkdir -p $(dir $(ANDROID_OUTPUT))
-	@$(GO) mod download
+	@$(GO) get golang.org/x/mobile/bind
 	@GOPATH=$(GOPATH) PATH=$(GOPATH)/bin:$(GOROOT)/bin:$$PATH $(GOMOBILE) bind \
 		-target=android \
 		-androidapi $(ANDROID_API) \
@@ -48,7 +48,7 @@ android: setup
 ios: setup
 	@echo "Building iOS XCFramework..."
 	@mkdir -p $(dir $(IOS_OUTPUT))
-	@$(GO) mod download
+	@$(GO) get golang.org/x/mobile/bind
 	@GOPATH=$(GOPATH) PATH=$(GOPATH)/bin:$(GOROOT)/bin:$$PATH $(GOMOBILE) bind \
 		-target=ios \
 		-o $(IOS_OUTPUT) \
