@@ -7,28 +7,29 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"runtime"
 	"sync"
 	"time"
 )
 
 type JSONRPCRequest struct {
-	JSONRPC string      `json:"jsonrpc"`
-	Method  string      `json:"method"`
-	Params  interface{} `json:"params,omitempty"`
-	ID      interface{} `json:"id"`
+	JSONRPC string `json:"jsonrpc"`
+	Method  string `json:"method"`
+	Params  any    `json:"params,omitempty"`
+	ID      any    `json:"id"`
 }
 
 type JSONRPCResponse struct {
 	JSONRPC string        `json:"jsonrpc"`
-	Result  interface{}   `json:"result,omitempty"`
+	Result  any           `json:"result,omitempty"`
 	Error   *JSONRPCError `json:"error,omitempty"`
-	ID      interface{}   `json:"id"`
+	ID      any           `json:"id"`
 }
 
 type JSONRPCError struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    any    `json:"data,omitempty"`
 }
 
 type HTTPServer struct {
@@ -152,7 +153,7 @@ func (s *HTTPServer) processRequest(req JSONRPCRequest) JSONRPCResponse {
 
 	switch req.Method {
 	case "getGreeting":
-		params, ok := req.Params.(map[string]interface{})
+		params, ok := req.Params.(map[string]any)
 		if !ok {
 			return s.errorResponse(req.ID, -32602, "Invalid params")
 		}
@@ -168,7 +169,7 @@ func (s *HTTPServer) processRequest(req JSONRPCRequest) JSONRPCResponse {
 		return JSONRPCResponse{JSONRPC: "2.0", Result: result, ID: req.ID}
 
 	case "calculate":
-		params, ok := req.Params.(map[string]interface{})
+		params, ok := req.Params.(map[string]any)
 		if !ok {
 			return s.errorResponse(req.ID, -32602, "Invalid params")
 		}
@@ -181,7 +182,7 @@ func (s *HTTPServer) processRequest(req JSONRPCRequest) JSONRPCResponse {
 		return JSONRPCResponse{JSONRPC: "2.0", Result: result, ID: req.ID}
 
 	case "getSystemInfo":
-		result := fmt.Sprintf("Go version: %s", "1.24")
+		result := fmt.Sprintf("Go version: %s", runtime.Version())
 		return JSONRPCResponse{JSONRPC: "2.0", Result: result, ID: req.ID}
 
 	default:
@@ -189,7 +190,7 @@ func (s *HTTPServer) processRequest(req JSONRPCRequest) JSONRPCResponse {
 	}
 }
 
-func (s *HTTPServer) errorResponse(id interface{}, code int, message string) JSONRPCResponse {
+func (s *HTTPServer) errorResponse(id any, code int, message string) JSONRPCResponse {
 	return JSONRPCResponse{
 		JSONRPC: "2.0",
 		Error:   &JSONRPCError{Code: code, Message: message},
@@ -197,7 +198,7 @@ func (s *HTTPServer) errorResponse(id interface{}, code int, message string) JSO
 	}
 }
 
-func (s *HTTPServer) writeError(w http.ResponseWriter, id interface{}, code int, message string) {
+func (s *HTTPServer) writeError(w http.ResponseWriter, id any, code int, message string) {
 	response := s.errorResponse(id, code, message)
 	w.WriteHeader(http.StatusBadRequest)
 	json.NewEncoder(w).Encode(response)

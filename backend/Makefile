@@ -21,7 +21,7 @@ setup: check-go install-gomobile setup-mobile-src
 check-go:
 	@echo "Checking Go installation..."
 	@if ! command -v $(GO) > /dev/null 2>&1; then \
-		echo "Error: Go not found. Please install Go 1.24+"; \
+		echo "Error: Go not found. Please install Go 1.25+"; \
 		echo "Visit: https://golang.org/dl/"; \
 		exit 1; \
 	fi
@@ -40,19 +40,15 @@ setup-mobile-src:
 	@echo "Setting up golang.org/x/mobile source..."
 	@echo "Downloading mobile module to cache..."
 	@$(GO) mod download golang.org/x/mobile
-	@if [ ! -d "$(MOBILE_PKG_SRC)" ]; then \
-		echo "Creating symlink from module cache to GOPATH/src..."; \
-		mkdir -p $(GOPATH)/src/golang.org/x; \
-		MOBILE_CACHE=$$(find $(shell $(GO) env GOMODCACHE)/golang.org/x -maxdepth 1 -name "mobile@*" -type d | head -1); \
-		if [ -n "$$MOBILE_CACHE" ] && [ -d "$$MOBILE_CACHE" ]; then \
-			ln -sf $$MOBILE_CACHE $(MOBILE_PKG_SRC); \
-			echo "Symlink created: $(MOBILE_PKG_SRC) -> $$MOBILE_CACHE"; \
-		else \
-			echo "Cloning golang.org/x/mobile as fallback..."; \
-			git clone https://go.googlesource.com/mobile $(MOBILE_PKG_SRC); \
-		fi \
+	@echo "Creating symlink from module cache to GOPATH/src..."
+	@mkdir -p $(GOPATH)/src/golang.org/x
+	@MOBILE_CACHE=$$($(GO) mod download -json golang.org/x/mobile | grep '"Dir"' | cut -d'"' -f4); \
+	if [ -n "$$MOBILE_CACHE" ] && [ -d "$$MOBILE_CACHE" ]; then \
+		ln -sf $$MOBILE_CACHE $(MOBILE_PKG_SRC); \
+		echo "Symlink created: $(MOBILE_PKG_SRC) -> $$MOBILE_CACHE"; \
 	else \
-		echo "Mobile source already exists at $(MOBILE_PKG_SRC)"; \
+		echo "Error: failed to resolve golang.org/x/mobile module path"; \
+		exit 1; \
 	fi
 	@echo "Initializing gomobile..."
 	@GOPATH=$(GOPATH) PATH=$(GOPATH)/bin:$(GOROOT)/bin:$$PATH $(GOMOBILE) init
