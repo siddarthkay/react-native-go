@@ -22,74 +22,62 @@ This project showcases how to build a fast mobile application where:
 
 - Node.js 18+
 - Yarn 4 (via Corepack): `corepack enable`
-- Go 1.24+
-- gomobile: `go install golang.org/x/mobile/cmd/gomobile@latest`
+- Go 1.25+
 - iOS: Xcode 15+, CocoaPods
 - Android: Android Studio, JDK 17+
 
 ## Quick Start
 
-### Setup Build Environment
+### Setup
 
-Enable Corepack for Yarn 4:
+Install Go toolchain (gomobile) and Node dependencies:
 ```bash
-corepack enable
-```
-
-Setup Go backend (installs gomobile and required dependencies):
-```bash
-cd backend
 make setup
 ```
 
-### Build Go Backend
+### Build & Run
 
 iOS:
 ```bash
-cd backend
 make ios
 ```
 
 Android:
 ```bash
-cd backend
 make android
 ```
 
-You can also run `make help` in the backend directory to see all available targets.
-
-### Run the App
-
-iOS:
+Run `make help` to see all available targets. Each sub-project also has its own Makefile:
 ```bash
-cd mobile-app
-yarn install
-npx pod-install
-npx expo run:ios
+make -C backend help
+make -C mobile-app help
 ```
 
-Android:
+### Development Mode
+
+For iterative development with hot reload:
 ```bash
 cd mobile-app
-yarn install
-npx expo run:android
+yarn ios    # or yarn android
 ```
 
 ## Project Structure
 
 ```
 react-native-go/
+├── Makefile                        # Root orchestrator
 ├── backend/
-│   ├── mobile_api.go      # Mobile API for server lifecycle
-│   ├── http_server.go     # JSON-RPC HTTP server
-│   └── Makefile
+│   ├── Makefile                    # Go build targets
+│   ├── mobile_api.go               # Mobile API for server lifecycle
+│   └── http_server.go              # JSON-RPC HTTP server
 └── mobile-app/
+    ├── Makefile                    # Mobile build targets
     ├── src/
-    │   ├── NativeGoServerBridge.ts    # TurboModule spec
-    │   ├── GoServerBridgeJSI.ts       # JSI wrapper
-    │   └── JsonRpcClient.ts           # JSON-RPC client
-    ├── android/               # Android native code
-    └── ios/                   # iOS native code
+    │   ├── NativeGoServerBridge.ts # TurboModule spec
+    │   ├── GoServerBridgeJSI.ts    # JSI wrapper
+    │   └── JsonRpcClient.ts        # JSON-RPC client
+    ├── android/                    # Android native code
+    └── ios/                        # iOS native code
 ```
 
 ## How It Works
@@ -155,7 +143,7 @@ To add a new endpoint, modify only the Go backend:
 
 ```go
 case "myNewMethod":
-    params, ok := req.Params.(map[string]interface{})
+    params, ok := req.Params.(map[string]any)
     if !ok {
         return s.errorResponse(req.ID, -32602, "Invalid params")
     }
@@ -176,28 +164,27 @@ No native code changes required.
 ### gomobile not found
 ```bash
 export PATH=$PATH:$(go env GOPATH)/bin
-gomobile init
 ```
+Or run `make setup` from the project root which installs gomobile automatically.
 
 ### Cannot find Gobridge.xcframework
 ```bash
-cd backend
-make ios
+make -C backend ios
 ```
 
 ### Cannot find gobridge.aar
 ```bash
-cd backend
-make android
+make -C backend android
 ```
-
 
 ## Development Workflow
 
 ### Changes to Go Code
-1. Edit backend/*.go files
-2. Rebuild: `cd backend && make ios` or `make android`
-3. Rebuild app: `cd mobile-app && npx expo run:ios` or `npx expo run:android`
+1. Edit `backend/*.go` files
+2. Rebuild and run: `make ios` or `make android`
+
+### Changes to JS/TS Code
+Hot reload handles this automatically when running in development mode.
 
 ## License
 
