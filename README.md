@@ -26,6 +26,17 @@ This project showcases how to build a fast mobile application where:
 - iOS: Xcode 15+, CocoaPods
 - Android: Android Studio, JDK 17+
 
+## Create a New Project
+
+```bash
+npx create-react-native-go my-app --bundleId com.mycompany.myapp --goModule mycompany.com/my-app
+cd my-app
+make setup
+make ios    # or: make android
+```
+
+The CLI scaffolds a new project with your app name, bundle ID, and Go module — fully configured and ready to build.
+
 ## Quick Start
 
 ### Setup

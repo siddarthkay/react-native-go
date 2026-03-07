@@ -60,9 +60,13 @@ backend/*.xcframework
 # IDEs
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
+
+# CLI template (generated before npm publish)
+cli/template/
 
 # Testing
 coverage/

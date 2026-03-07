@@ -1,0 +1,32 @@
+{
+  "name": "create-react-native-go",
+  "version": "1.0.2",
+  "description": "Create a React Native + Go mobile app",
+  "bin": {
+    "create-react-native-go": "./bin.js"
+  },
+  "scripts": {
+    "prepublishOnly": "./build-template.sh"
+  },
+  "files": [
+    "bin.js",
+    "src/",
+    "template/"
+  ],
+  "keywords": [
+    "react-native",
+    "golang",
+    "go",
+    "mobile",
+    "template",
+    "gomobile",
+    "jsi",
+    "turbomodules"
+  ],
+  "author": "siddarthkay",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/siddarthkay/react-native-go"
+  }
+}
