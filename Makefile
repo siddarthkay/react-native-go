@@ -2,7 +2,8 @@
 
 setup:
 	@$(MAKE) -C backend setup
-	@$(MAKE) -C mobile-app install
+	@$(MAKE) -C mobile-app node-install
+	@if [ "$$(uname)" = "Darwin" ]; then $(MAKE) -C mobile-app pod-install; fi
 
 ios:
 	@$(MAKE) -C backend ios

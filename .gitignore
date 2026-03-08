@@ -68,6 +68,10 @@ backend/*.xcframework
 # CLI template (generated before npm publish)
 cli/template/
 
+# Nix
+.direnv/
+result
+
 # Testing
 coverage/
 *.log

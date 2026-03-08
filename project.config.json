@@ -1,0 +1,16 @@
+{
+  "appName": "rn-golang",
+  "bundleId": "io.rngolang.app",
+  "goModule": "github.com/siddarthkay/react-native-go",
+  "iosProjectName": "mobileapp",
+  "androidApiLevel": 23,
+  "goVersion": "1.25",
+  "targets": {
+    "android": {
+      "output": "mobile-app/android/app/libs/gobridge.aar"
+    },
+    "ios": {
+      "output": "mobile-app/ios/Frameworks/Gobridge.xcframework"
+    }
+  }
+}

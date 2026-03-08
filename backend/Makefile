@@ -4,10 +4,10 @@ GOROOT ?= $(shell $(GO) env GOROOT)
 GOMOBILE ?= $(GOPATH)/bin/gomobile
 GOBIND ?= $(GOPATH)/bin/gobind
 
-ANDROID_OUTPUT = ../mobile-app/android/app/libs/gobridge.aar
-IOS_OUTPUT = ../mobile-app/ios/Frameworks/Gobridge.xcframework
-
-ANDROID_API = 23
+CONFIG_FILE ?= ../project.config.json
+ANDROID_OUTPUT ?= $(shell jq -r '"../"+.targets.android.output' $(CONFIG_FILE) 2>/dev/null || echo "../mobile-app/android/app/libs/gobridge.aar")
+IOS_OUTPUT ?= $(shell jq -r '"../"+.targets.ios.output' $(CONFIG_FILE) 2>/dev/null || echo "../mobile-app/ios/Frameworks/Gobridge.xcframework")
+ANDROID_API ?= $(shell jq -r '.androidApiLevel' $(CONFIG_FILE) 2>/dev/null || echo "23")
 
 .PHONY: all setup android ios clean check-go install-gomobile
 

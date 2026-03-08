@@ -51,7 +51,7 @@ jobs:
         run: make -C backend android
 
       - name: Install Node dependencies
-        run: make -C mobile-app install
+        run: make -C mobile-app node-install
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4

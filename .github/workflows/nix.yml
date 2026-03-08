@@ -1,0 +1,78 @@
+name: Nix Build
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'flake.nix'
+      - 'flake.lock'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'flake.nix'
+      - 'flake.lock'
+  workflow_dispatch:
+
+jobs:
+  nix-build-android:
+    name: Nix Android Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Cache Nix store
+        uses: cachix/cachix-action@v15
+        with:
+          name: devenv
+          skipPush: true
+
+      - name: Build Android inside Nix shell
+        run: nix develop --command bash -c 'make setup && make android'
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: nix-app-release-android
+          path: mobile-app/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 7
+
+  nix-build-ios:
+    name: Nix iOS Build
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Cache Nix store
+        uses: cachix/cachix-action@v15
+        with:
+          name: devenv
+          skipPush: true
+
+      - name: Build Go backend for iOS
+        run: nix develop --command bash -c 'make -C backend ios'
+
+      - name: Build iOS Simulator App
+        run: nix develop --command bash -c 'make -C mobile-app ios'
+
+      - name: Upload Simulator Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: nix-app-release-ios
+          path: mobile-app/ios/build/Build/Products/Release-iphonesimulator/*.app
+          retention-days: 7

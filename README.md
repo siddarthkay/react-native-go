@@ -20,6 +20,20 @@ This project showcases how to build a fast mobile application where:
 
 ## Prerequisites
 
+### Option A: Nix (recommended)
+
+If you have [Nix](https://nixos.org/download/) installed, everything is provided automatically:
+
+```bash
+nix develop
+make setup
+make ios    # or: make android
+```
+
+The Nix flake provides Node.js, Go, JDK 17, Android SDK, CocoaPods, gomobile, and all other dependencies — no manual installation needed.
+
+### Option B: Manual setup
+
 - Node.js 18+
 - Yarn 4 (via Corepack): `corepack enable`
 - Go 1.25+

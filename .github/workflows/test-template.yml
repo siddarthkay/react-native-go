@@ -10,7 +10,7 @@ on:
 jobs:
   test-template-ios:
     name: Template → iOS Build
-    runs-on: macos-15
+    runs-on: macos-26
 
     steps:
       - name: Checkout repository
@@ -32,13 +32,12 @@ jobs:
 
       - name: Generate project from template
         run: |
-          cd cli
-          bash build-template.sh
-          node bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app
+          bash cli/build-template.sh
+          node cli/bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app
 
       - name: Verify no leftover identifiers
         run: |
-          cd cli/test-app
+          cd test-app
           if grep -r "rn-golang" --include="*.go" --include="*.ts" --include="*.json" --include="*.kt" --include="*.swift" --include="*.pbxproj" --include="*.plist" .; then
             echo "ERROR: Found leftover 'rn-golang' references"
             exit 1
@@ -54,13 +53,13 @@ jobs:
           echo "All identifiers replaced correctly"
 
       - name: Setup Go backend
-        run: make -C cli/test-app/backend setup
+        run: make -C test-app/backend setup
 
       - name: Build Go backend for iOS
-        run: make -C cli/test-app/backend ios
+        run: make -C test-app/backend ios
 
       - name: Install Node dependencies
-        run: make -C cli/test-app/mobile-app install
+        run: make -C test-app/mobile-app node-install
         env:
           YARN_ENABLE_HARDENED_MODE: 0
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
@@ -69,27 +68,16 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.0'
-          working-directory: cli/test-app/mobile-app/ios
+          working-directory: test-app/mobile-app/ios
 
       - name: Install CocoaPods
-        run: make -C cli/test-app/mobile-app pod-install
+        run: make -C test-app/mobile-app pod-install
 
-      - name: Select Xcode
-        run: sudo xcode-select -s "/Applications/Xcode_16.4.app/Contents/Developer"
+      - name: Install xcbeautify
+        run: brew install xcbeautify
 
       - name: Build iOS Simulator App
-        working-directory: cli/test-app/mobile-app
-        run: |
-          set -o pipefail
-          xcodebuild -workspace ios/testapp.xcworkspace \
-            -scheme testapp \
-            -sdk iphonesimulator \
-            -configuration Release \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -derivedDataPath ios/build \
-            CODE_SIGNING_ALLOWED=NO \
-            ARCHS=arm64 \
-            ONLY_ACTIVE_ARCH=YES
+        run: make -C test-app/mobile-app build-ios
 
   test-template-android:
     name: Template → Android Build
@@ -115,13 +103,12 @@ jobs:
 
       - name: Generate project from template
         run: |
-          cd cli
-          bash build-template.sh
-          node bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app
+          bash cli/build-template.sh
+          node cli/bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app
 
       - name: Verify no leftover identifiers
         run: |
-          cd cli/test-app
+          cd test-app
           if grep -r "rn-golang" --include="*.go" --include="*.ts" --include="*.json" --include="*.kt" --include="*.swift" --include="*.pbxproj" --include="*.plist" .; then
             echo "ERROR: Found leftover 'rn-golang' references"
             exit 1
@@ -137,13 +124,13 @@ jobs:
           echo "All identifiers replaced correctly"
 
       - name: Setup Go backend
-        run: make -C cli/test-app/backend setup
+        run: make -C test-app/backend setup
 
       - name: Build Go backend for Android
-        run: make -C cli/test-app/backend android
+        run: make -C test-app/backend android
 
       - name: Install Node dependencies
-        run: make -C cli/test-app/mobile-app install
+        run: make -C test-app/mobile-app node-install
         env:
           YARN_ENABLE_HARDENED_MODE: 0
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
@@ -160,9 +147,9 @@ jobs:
           cache-read-only: false
 
       - name: Build Release APK
-        run: make -C cli/test-app/mobile-app build-android
+        run: make -C test-app/mobile-app build-android
 
       - name: Stop Gradle daemon
         if: always()
-        working-directory: cli/test-app/mobile-app/android
+        working-directory: test-app/mobile-app/android
         run: ./gradlew --stop

@@ -2,13 +2,15 @@ YARN ?= yarn
 GRADLEW = android/gradlew
 ANDROID_APK = android/app/build/outputs/apk/release/app-release.apk
 
-XCODE_WORKSPACE = ios/mobileapp.xcworkspace
-XCODE_SCHEME = mobileapp
+CONFIG_FILE ?= ../project.config.json
+IOS_PROJECT ?= $(shell jq -r '.iosProjectName' $(CONFIG_FILE) 2>/dev/null || echo "mobileapp")
+XCODE_WORKSPACE = ios/$(IOS_PROJECT).xcworkspace
+XCODE_SCHEME = $(IOS_PROJECT)
 XCODE_DERIVEDDATA = ios/build
 
-.PHONY: install pod-install build-ios build-android run-ios run-android clean-ios clean-android clean help
+.PHONY: node-install pod-install ios build-ios android build-android run-ios run-android clean-ios clean-android clean help
 
-install:
+node-install:
 	@echo "Installing Node dependencies..."
 	@$(YARN) install
 	@echo "✓ Node dependencies installed"
@@ -18,7 +20,9 @@ pod-install:
 	@cd ios && pod install
 	@echo "✓ CocoaPods installed"
 
-build-ios: install pod-install
+ios: node-install pod-install build-ios
+
+build-ios:
 	@echo "Building iOS Simulator app..."
 	@set -o pipefail && xcodebuild -workspace $(XCODE_WORKSPACE) \
 		-scheme $(XCODE_SCHEME) \
@@ -28,10 +32,13 @@ build-ios: install pod-install
 		-derivedDataPath $(XCODE_DERIVEDDATA) \
 		CODE_SIGNING_ALLOWED=NO \
 		ARCHS=arm64 \
-		ONLY_ACTIVE_ARCH=YES
-	@echo "✓ iOS app built at $(XCODE_DERIVEDDATA)/Build/Products/Release-iphonesimulator/mobileapp.app"
+		ONLY_ACTIVE_ARCH=YES \
+		$(if $(shell command -v xcbeautify 2>/dev/null),| xcbeautify,)
+	@echo "✓ iOS app built at $(XCODE_DERIVEDDATA)/Build/Products/Release-iphonesimulator/$(IOS_PROJECT).app"
 
-build-android: install
+android: node-install build-android
+
+build-android:
 	@echo "Building Android Release APK..."
 	@chmod +x $(GRADLEW)
 	@cd android && ./gradlew assembleRelease --no-daemon
@@ -57,10 +64,12 @@ clean: clean-ios clean-android
 
 help:
 	@echo "Available targets:"
-	@echo "  make install        - Install Node dependencies"
+	@echo "  make node-install   - Install Node dependencies"
 	@echo "  make pod-install    - Install CocoaPods dependencies"
-	@echo "  make build-ios      - Build iOS Simulator app"
-	@echo "  make build-android  - Build Android Release APK"
+	@echo "  make ios            - Install deps + build iOS Simulator app"
+	@echo "  make build-ios      - Build iOS Simulator app (deps must be installed)"
+	@echo "  make android        - Install deps + build Android Release APK"
+	@echo "  make build-android  - Build Android Release APK (deps must be installed)"
 	@echo "  make run-ios        - Start iOS dev build via Expo"
 	@echo "  make run-android    - Start Android dev build via Expo"
 	@echo "  make clean-ios      - Clean iOS build artifacts"

@@ -10,7 +10,7 @@ on:
 jobs:
   build-ios:
     name: Build iOS App
-    runs-on: macos-15
+    runs-on: macos-26
 
     steps:
       - name: Checkout repository
@@ -51,7 +51,7 @@ jobs:
         run: make -C backend ios
 
       - name: Install Node dependencies
-        run: make -C mobile-app install
+        run: make -C mobile-app node-install
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -62,26 +62,11 @@ jobs:
       - name: Install CocoaPods dependencies
         run: make -C mobile-app pod-install
 
-      - name: Select Xcode
-        run: sudo xcode-select -s "/Applications/Xcode_16.4.app/Contents/Developer"
-
       - name: Install xcbeautify
         run: brew install xcbeautify
 
       - name: Build iOS Simulator App
-        working-directory: mobile-app/ios
-        run: |
-          set -o pipefail
-          xcodebuild -workspace mobileapp.xcworkspace \
-            -scheme mobileapp \
-            -sdk iphonesimulator \
-            -configuration Release \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            ARCHS=arm64 \
-            ONLY_ACTIVE_ARCH=YES \
-            | xcbeautify
+        run: make -C mobile-app build-ios
 
       - name: Prepare iOS app for upload
         working-directory: mobile-app/ios/build/Build/Products/Release-iphonesimulator
