@@ -19,6 +19,9 @@ jobs:
       - name: Build Go backend for iOS
         run: nix develop --command bash -c 'make -C backend setup && make -C backend test && make -C backend vet && make -C backend ios'
 
+      - name: Clean iOS build cache
+        run: rm -rf mobile-app/ios/build mobile-app/ios/Pods
+
       - name: Build iOS Simulator App
         run: nix develop --command bash -c 'make -C mobile-app ios'
 
