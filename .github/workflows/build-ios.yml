@@ -11,68 +11,16 @@ jobs:
   build-ios:
     name: Build iOS App
     runs-on: self-hosted
-    env:
-      RUNNER_TOOL_CACHE: /tmp/runner-tool-cache
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Yarn cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            mobile-app/.yarn/cache
-            mobile-app/.yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('mobile-app/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.25'
-          cache: true
-          cache-dependency-path: backend/go.sum
-
-      - name: Setup Go backend
-        run: make -C backend setup
-
-      - name: Test Go backend
-        run: make -C backend test && make -C backend vet
-
       - name: Build Go backend for iOS
-        run: make -C backend ios
-
-      - name: Install Node dependencies
-        run: make -C mobile-app node-install
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          working-directory: mobile-app/ios
-
-      - name: Install Ruby dependencies
-        working-directory: mobile-app/ios
-        run: bundle install
-
-      - name: Install CocoaPods dependencies
-        run: make -C mobile-app pod-install
-
-      - name: Install xcbeautify
-        run: brew install xcbeautify
+        run: nix develop --command bash -c 'make -C backend setup && make -C backend test && make -C backend vet && make -C backend ios'
 
       - name: Build iOS Simulator App
-        run: make -C mobile-app build-ios
+        run: nix develop --command bash -c 'make -C mobile-app ios'
 
       - name: Prepare iOS app for upload
         working-directory: mobile-app/ios/build/Build/Products/Release-iphonesimulator
