@@ -55,6 +55,12 @@ jobs:
       - name: Install Node dependencies
         run: make -C mobile-app node-install
 
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          working-directory: mobile-app/ios
+
       - name: Install Ruby dependencies
         working-directory: mobile-app/ios
         run: bundle install
