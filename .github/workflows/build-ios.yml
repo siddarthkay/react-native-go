@@ -11,6 +11,8 @@ jobs:
   build-ios:
     name: Build iOS App
     runs-on: self-hosted
+    env:
+      RUNNER_TOOL_CACHE: /tmp/runner-tool-cache
 
     steps:
       - name: Checkout repository
