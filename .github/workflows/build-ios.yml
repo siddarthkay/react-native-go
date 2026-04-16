@@ -10,7 +10,7 @@ on:
 jobs:
   build-ios:
     name: Build iOS App
-    runs-on: m2-anmol
+    runs-on: [self-hosted, macOS, ARM64]
 
     steps:
       - name: Checkout repository
