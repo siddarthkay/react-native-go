@@ -56,23 +56,11 @@ jobs:
 
   test-template-android:
     name: Template → Android Build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-
-      - name: Cache Nix store
-        uses: cachix/cachix-action@v15
-        with:
-          name: devenv
-          skipPush: true
 
       - name: Generate project from template
         run: nix develop --command bash -c 'bash cli/build-template.sh && node cli/bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app'
