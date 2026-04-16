@@ -16,24 +16,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
         with:
-          node-version: '20'
+          extra_nix_config: |
+            experimental-features = nix-command flakes
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - name: Cache Nix store
+        uses: cachix/cachix-action@v15
         with:
-          go-version: '1.25'
-          cache: false
+          name: devenv
+          skipPush: true
 
       - name: Generate project from template
-        run: |
-          bash cli/build-template.sh
-          node cli/bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app
+        run: nix develop --command bash -c 'bash cli/build-template.sh && node cli/bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app'
 
       - name: Verify no leftover identifiers
         run: |
@@ -52,32 +48,11 @@ jobs:
           fi
           echo "All identifiers replaced correctly"
 
-      - name: Setup Go backend
-        run: make -C test-app/backend setup
-
-      - name: Build Go backend for iOS
-        run: make -C test-app/backend ios
-
-      - name: Install Node dependencies
-        run: make -C test-app/mobile-app node-install
+      - name: Build Go backend and iOS app
+        run: nix develop --command bash -c 'make -C test-app/backend setup && make -C test-app/backend ios && make -C test-app/mobile-app ios'
         env:
           YARN_ENABLE_HARDENED_MODE: 0
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.0'
-          working-directory: test-app/mobile-app/ios
-
-      - name: Install CocoaPods
-        run: make -C test-app/mobile-app pod-install
-
-      - name: Install xcbeautify
-        run: brew install xcbeautify
-
-      - name: Build iOS Simulator App
-        run: make -C test-app/mobile-app build-ios
 
   test-template-android:
     name: Template → Android Build
@@ -87,24 +62,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
         with:
-          node-version: '20'
+          extra_nix_config: |
+            experimental-features = nix-command flakes
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - name: Cache Nix store
+        uses: cachix/cachix-action@v15
         with:
-          go-version: '1.25'
-          cache: false
+          name: devenv
+          skipPush: true
 
       - name: Generate project from template
-        run: |
-          bash cli/build-template.sh
-          node cli/bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app
+        run: nix develop --command bash -c 'bash cli/build-template.sh && node cli/bin.js test-app --bundleId com.ci.testapp --goModule ci.test/test-app'
 
       - name: Verify no leftover identifiers
         run: |
@@ -123,33 +94,8 @@ jobs:
           fi
           echo "All identifiers replaced correctly"
 
-      - name: Setup Go backend
-        run: make -C test-app/backend setup
-
-      - name: Build Go backend for Android
-        run: make -C test-app/backend android
-
-      - name: Install Node dependencies
-        run: make -C test-app/mobile-app node-install
+      - name: Build Go backend and Android app
+        run: nix develop --command bash -c 'make -C test-app/backend setup && make -C test-app/backend android && make -C test-app/mobile-app android'
         env:
           YARN_ENABLE_HARDENED_MODE: 0
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'zulu'
-
-      - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: false
-
-      - name: Build Release APK
-        run: make -C test-app/mobile-app build-android
-
-      - name: Stop Gradle daemon
-        if: always()
-        working-directory: test-app/mobile-app/android
-        run: ./gradlew --stop

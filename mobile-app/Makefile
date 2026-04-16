@@ -17,7 +17,7 @@ node-install:
 
 pod-install:
 	@echo "Installing CocoaPods dependencies..."
-	@cd ios && bundle exec pod install
+	@cd ios && pod install
 	@echo "✓ CocoaPods installed"
 
 ios: node-install pod-install build-ios
