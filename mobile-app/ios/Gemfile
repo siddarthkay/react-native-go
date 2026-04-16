@@ -1,0 +1,4 @@
+source 'https://rubygems.org'
+
+# CocoaPods 1.15+ required for visionOS support in react-native-svg
+gem 'cocoapods', '~> 1.15'
