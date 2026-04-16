@@ -10,7 +10,7 @@ on:
 jobs:
   test-template-ios:
     name: Template → iOS Build
-    runs-on: macos-26
+    runs-on: m2-anmol
 
     steps:
       - name: Checkout repository
