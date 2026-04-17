@@ -16,23 +16,11 @@ on:
 jobs:
   nix-build-android:
     name: Nix Android Build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-
-      - name: Cache Nix store
-        uses: cachix/cachix-action@v15
-        with:
-          name: devenv
-          skipPush: true
 
       - name: Build Android inside Nix shell
         run: nix develop --command bash -c 'make setup && make android'
@@ -46,23 +34,11 @@ jobs:
 
   nix-build-ios:
     name: Nix iOS Build
-    runs-on: macos-26
+    runs-on: [self-hosted, macOS, ARM64]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-
-      - name: Cache Nix store
-        uses: cachix/cachix-action@v15
-        with:
-          name: devenv
-          skipPush: true
 
       - name: Build Go backend for iOS
         run: nix develop --command bash -c 'make -C backend ios'
