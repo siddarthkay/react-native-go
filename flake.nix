@@ -20,7 +20,7 @@
         # Android SDK configuration
         androidComposition = pkgs.androidenv.composeAndroidPackages {
           buildToolsVersions = [ "33.0.0" "34.0.0" "35.0.0" ];
-          platformVersions = [ "33" "34" "35" ];
+          platformVersions = [ "23" "33" "34" "35" ];
           abiVersions = [ "armeabi-v7a" "arm64-v8a" "x86" "x86_64" ];
           includeNDK = true;
           ndkVersions = [ "25.1.8937393" ];
@@ -71,8 +71,10 @@
             export ANDROID_SDK_ROOT="$HOME/.android-sdk-nix"
             export ANDROID_HOME="$ANDROID_SDK_ROOT"
 
-            if [ ! -d "$ANDROID_SDK_ROOT" ]; then
+            # Rebuild if missing, or if any symlink is dangling (nix GC removed the store path)
+            if [ ! -d "$ANDROID_SDK_ROOT" ] || [ ! -e "$ANDROID_SDK_ROOT/platforms/android-35" ] || [ ! -e "$ANDROID_SDK_ROOT/platform-tools" ]; then
               echo "Setting up Android SDK in $ANDROID_SDK_ROOT..."
+              rm -rf "$ANDROID_SDK_ROOT"
               mkdir -p "$ANDROID_SDK_ROOT"
               cp -r ${androidSdk}/libexec/android-sdk/* "$ANDROID_SDK_ROOT/" 2>/dev/null || true
               chmod -R u+w "$ANDROID_SDK_ROOT" 2>/dev/null || true
