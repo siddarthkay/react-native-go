@@ -106,11 +106,16 @@
             # Nix injects C/C++ flags and compiler wrappers that conflict with Xcode builds.
             # Unsetting all Nix compiler-related env vars ensures xcodebuild uses Apple's toolchain.
             if [[ "$OSTYPE" == "darwin"* ]]; then
-              unset DEVELOPER_DIR SDKROOT
+              unset SDKROOT
               unset NIX_CFLAGS_COMPILE NIX_LDFLAGS NIX_ENFORCE_NO_NATIVE
               unset NIX_CC NIX_CXX NIX_BINTOOLS
               unset NIX_CFLAGS_COMPILE_FOR_TARGET NIX_LDFLAGS_FOR_TARGET
               export PATH="/usr/bin:$PATH"
+              if [ -d /Applications/Xcode.app/Contents/Developer ]; then
+                export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+              else
+                unset DEVELOPER_DIR
+              fi
               echo "  macOS: iOS and Android development available"
               echo "  CocoaPods: $(pod --version 2>/dev/null || echo 'not available')"
             else

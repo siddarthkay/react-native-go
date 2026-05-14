@@ -10,7 +10,7 @@ on:
 jobs:
   test-template-ios:
     name: Template → iOS Build
-    runs-on: [self-hosted, macOS, ARM64]
+    runs-on: bladerunner-macos 
 
     steps:
       - name: Checkout repository

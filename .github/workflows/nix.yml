@@ -34,7 +34,7 @@ jobs:
 
   nix-build-ios:
     name: Nix iOS Build
-    runs-on: [self-hosted, macOS, ARM64]
+    runs-on: bladerunner-macos 
 
     steps:
       - name: Checkout repository

@@ -10,7 +10,7 @@ on:
 jobs:
   build-ios:
     name: Build iOS App
-    runs-on: [self-hosted, macOS, ARM64]
+    runs-on: bladerunner-macos
 
     steps:
       - name: Checkout repository
