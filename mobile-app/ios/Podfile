@@ -7,9 +7,7 @@ podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties
 ENV['RCT_NEW_ARCH_ENABLED'] ||= '0' if podfile_properties['newArchEnabled'] == 'false'
 ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] ||= podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
 ENV['RCT_USE_RN_DEP'] ||= '1' if podfile_properties['ios.buildReactNativeFromSource'] != 'true' && podfile_properties['newArchEnabled'] != 'false'
-# Force building React-Core from source to include DevSupport for expo-dev-client since expo 55 is not out yet
-ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
-platform :ios, podfile_properties['ios.deploymentTarget'] || '16.0'
+platform :ios, podfile_properties['ios.deploymentTarget'] || '16.4'
 
 prepare_react_native_project!
 
@@ -53,20 +51,29 @@ target 'mobileapp' do
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
 
-    # Ensure all pods use iOS 16.0 deployment target
+    # Ensure all pods use iOS 16.4 deployment target
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.4'
       end
+    end
 
-      # Fix ExpoModulesCore missing React-callinvoker dependency for RN 0.82
-      if target.name == 'ExpoModulesCore'
-        target.build_configurations.each do |config|
-          # Add React-callinvoker header search path
-          config.build_settings['HEADER_SEARCH_PATHS'] ||= ['$(inherited)']
-          config.build_settings['HEADER_SEARCH_PATHS'] << '"${PODS_ROOT}/Headers/Public/React-callinvoker"'
-          config.build_settings['HEADER_SEARCH_PATHS'] << '"${PODS_ROOT}/Headers/Private/React-callinvoker"'
-        end
+    # fmt 11.0.2's consteval path fails to compile under Xcode 26's clang;
+    # patch base.h so FMT_USE_CONSTEVAL stays at 0 regardless of detection.
+    fmt_base_h = File.join(installer.sandbox.root, 'fmt/include/fmt/base.h')
+    if File.exist?(fmt_base_h)
+      File.chmod(0644, fmt_base_h)
+      contents = File.read(fmt_base_h)
+      unless contents.include?('// react-native-go: force FMT_USE_CONSTEVAL=0')
+        patched = contents.sub(
+          '// Detect consteval, C++20 constexpr extensions and std::is_constant_evaluated.',
+          "// react-native-go: force FMT_USE_CONSTEVAL=0 to avoid Xcode 26 consteval evaluation bugs\n#define FMT_USE_CONSTEVAL 0\n#if 0\n// Detect consteval, C++20 constexpr extensions and std::is_constant_evaluated."
+        )
+        patched = patched.sub(
+          /\#if FMT_USE_CONSTEVAL\n\#  define FMT_CONSTEVAL consteval/,
+          "#endif\n#if FMT_USE_CONSTEVAL\n#  define FMT_CONSTEVAL consteval"
+        )
+        File.write(fmt_base_h, patched)
       end
     end
   end
