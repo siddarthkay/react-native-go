@@ -34,10 +34,10 @@ The Nix flake provides Node.js, Go, JDK 17, Android SDK, CocoaPods, gomobile, an
 
 ### Option B: Manual setup
 
-- Node.js 18+
+- Node.js 20.19.4+ (or 22+)
 - Yarn 4 (via Corepack): `corepack enable`
 - Go 1.25+
-- iOS: Xcode 15+, CocoaPods
+- iOS: Xcode 16+, CocoaPods
 - Android: Android Studio, JDK 17+
 
 ## Create a New Project

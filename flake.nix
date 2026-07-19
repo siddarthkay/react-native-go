@@ -19,8 +19,8 @@
 
         # Android SDK configuration
         androidComposition = pkgs.androidenv.composeAndroidPackages {
-          buildToolsVersions = [ "33.0.0" "34.0.0" "35.0.0" ];
-          platformVersions = [ "23" "33" "34" "35" ];
+          buildToolsVersions = [ "33.0.0" "34.0.0" "35.0.0" "36.0.0" ];
+          platformVersions = [ "23" "33" "34" "35" "36" ];
           abiVersions = [ "armeabi-v7a" "arm64-v8a" "x86" "x86_64" ];
           includeNDK = true;
           ndkVersions = [ "25.1.8937393" ];
@@ -34,7 +34,7 @@
         devShells.default = pkgs.mkShellNoCC {
           buildInputs = with pkgs; [
             # Node.js (yarn managed by project's corepack)
-            nodejs_20
+            nodejs_22
 
             # Go
             go
@@ -72,7 +72,7 @@
             export ANDROID_HOME="$ANDROID_SDK_ROOT"
 
             # Rebuild if missing, or if any symlink is dangling (nix GC removed the store path)
-            if [ ! -d "$ANDROID_SDK_ROOT" ] || [ ! -e "$ANDROID_SDK_ROOT/platforms/android-35" ] || [ ! -e "$ANDROID_SDK_ROOT/platform-tools" ]; then
+            if [ ! -d "$ANDROID_SDK_ROOT" ] || [ ! -e "$ANDROID_SDK_ROOT/platforms/android-36" ] || [ ! -e "$ANDROID_SDK_ROOT/platform-tools" ]; then
               echo "Setting up Android SDK in $ANDROID_SDK_ROOT..."
               rm -rf "$ANDROID_SDK_ROOT"
               mkdir -p "$ANDROID_SDK_ROOT"

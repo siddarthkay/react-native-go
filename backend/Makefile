@@ -4,6 +4,8 @@ GOROOT ?= $(shell $(GO) env GOROOT)
 GOMOBILE ?= $(GOPATH)/bin/gomobile
 GOBIND ?= $(GOPATH)/bin/gobind
 
+GOMOBILE_VERSION ?= v0.0.0-20260709172247-6129f5bee9d5
+
 CONFIG_FILE ?= ../project.config.json
 ANDROID_OUTPUT ?= $(shell jq -r '"../"+.targets.android.output' $(CONFIG_FILE) 2>/dev/null || echo "../mobile-app/android/app/libs/gobridge.aar")
 IOS_OUTPUT ?= $(shell jq -r '"../"+.targets.ios.output' $(CONFIG_FILE) 2>/dev/null || echo "../mobile-app/ios/Frameworks/Gobridge.xcframework")
@@ -29,15 +31,15 @@ check-go:
 
 install-gomobile:
 	@echo "Installing gomobile and gobind..."
-	@$(GO) install golang.org/x/mobile/cmd/gomobile@latest
-	@$(GO) install golang.org/x/mobile/cmd/gobind@latest
+	@$(GO) install golang.org/x/mobile/cmd/gomobile@$(GOMOBILE_VERSION)
+	@$(GO) install golang.org/x/mobile/cmd/gobind@$(GOMOBILE_VERSION)
 	@echo "Gomobile installed at: $(GOMOBILE)"
 	@echo "Gobind installed at: $(GOBIND)"
 
 android: setup
 	@echo "Building Android AAR..."
 	@mkdir -p $(dir $(ANDROID_OUTPUT))
-	@$(GO) get golang.org/x/mobile/bind
+	@$(GO) get golang.org/x/mobile/bind@$(GOMOBILE_VERSION)
 	@GOPATH=$(GOPATH) PATH=$(GOPATH)/bin:$(GOROOT)/bin:$$PATH $(GOMOBILE) bind \
 		-target=android \
 		-androidapi $(ANDROID_API) \
@@ -48,7 +50,7 @@ android: setup
 ios: setup
 	@echo "Building iOS XCFramework..."
 	@mkdir -p $(dir $(IOS_OUTPUT))
-	@$(GO) get golang.org/x/mobile/bind
+	@$(GO) get golang.org/x/mobile/bind@$(GOMOBILE_VERSION)
 	@GOPATH=$(GOPATH) PATH=$(GOPATH)/bin:$(GOROOT)/bin:$$PATH $(GOMOBILE) bind \
 		-target=ios \
 		-o $(IOS_OUTPUT) \
